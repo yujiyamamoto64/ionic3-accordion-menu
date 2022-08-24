@@ -1,7 +1,7 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { AlertController } from "ionic-angular";
-import { Observable } from "rxjs";
+import { AlertController } from "ionic-angular/components/alert/alert-controller";
+import { Observable } from "rxjs/Rx";
 import { StorageService } from "../services/storage.service";
 
 @Injectable()
@@ -57,7 +57,7 @@ export class ErrorInterceptor implements HttpInterceptor {
                 }
             ]
         });
-        alert.present
+        alert.present();
     }
 
     handleDefaultError(errorObj) {
@@ -71,9 +71,8 @@ export class ErrorInterceptor implements HttpInterceptor {
                 }
             ]
         });
-        alert.present
+        alert.present();
     }
-
 
 }
 
