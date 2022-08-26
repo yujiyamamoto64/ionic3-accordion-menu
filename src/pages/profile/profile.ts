@@ -36,7 +36,7 @@ export class ProfilePage {
       });
     }
     else {
-      this.navCtrl.setRoot('HomePage');
+      this.navCtrl.setRoot('ProfilePage');
     }
   }
 
