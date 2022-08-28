@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { AddressDTO } from '../../models/address.dto';
+import { OrderDTO } from '../../models/order.dto';
+import { CartService } from '../../services/domain/cart.service';
+import { ClientService } from '../../services/domain/client.service';
+import { StorageService } from '../../services/storage.service';
 
 @IonicPage()
 @Component({
@@ -9,47 +13,47 @@ import { AddressDTO } from '../../models/address.dto';
 })
 export class PickAddressPage {
 
-  items : AddressDTO[];
+  items: AddressDTO[];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  order: OrderDTO;
+
+  constructor(
+    public navCtrl: NavController, 
+    public navParams: NavParams,
+    public storage: StorageService,
+    public clientService: ClientService,
+    public cartService: CartService) {
   }
 
   ionViewDidLoad() {
-    this.items = [
-      {
-        id: "1",
-        publicPace: "Rua Quinze de Novembro",
-        number: "300",
-        complement: "Apto 200",
-        district: "Santa Mônica",
-        cep: "48293822",
-        city : {
-          id: "1",
-          name: "Uberlândia",
-          state: {
-            id: "1",
-            name: "Minas Gerais"
-          }
+    let localUser = this.storage.getLocalUser();
+    if (localUser && localUser.email) {
+      this.clientService.findByEmail(localUser.email)
+      .subscribe(response => {
+        this.items = response['addresses'];
+
+        let cart = this.cartService.getCart();
+
+        this.order = {
+          client: {id: response['id']},
+          shipAddress: null,
+          payment: null,
+          items: cart.items.map(x => {return {quantity: x.quantity, product: {id: x.product.id}}})
         }
       },
-      {
-        id : "2",
-        publicPace: "Rua Alexandre Toledo da Silva",
-        number: "405",
-        complement: null,
-        district: "Centro",
-        cep: "88933822",
-        city : {
-          id: "3",
-          name: "São Paulo",
-          state: {
-            id: "2",
-            name: "São Paulo"
-          }
+      error => {
+        if (error.status == 403) {
+          this.navCtrl.setRoot('HomePage');
         }
-      }
-
-    ];
+      });
+    }
+    else {
+      this.navCtrl.setRoot('HomePage')
+    }
   }
 
+  nextPage(item: AddressDTO) {
+    this.order.shipAddress = {id: item.id};
+    console.log(this.order);
+  }
 }
