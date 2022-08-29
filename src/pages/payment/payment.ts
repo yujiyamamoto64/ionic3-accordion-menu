@@ -24,14 +24,14 @@ export class PaymentPage {
       this.order = this.navParams.get('order');
 
       this.formGroup = this.formBuilder.group({
-        installments: [1, Validators.required],
+        installmentsNumber: [1, Validators.required],
         "@type": ["cardPayment", Validators.required]
       });
   }
 
   nextPage() {
     this.order.payment = this.formGroup.value;
-    console.log(this.order);
+    this.navCtrl.setRoot('OrderConfirmationPage', {order: this.order});
   }
 
 }
