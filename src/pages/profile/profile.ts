@@ -71,4 +71,8 @@ export class ProfilePage {
     });
   }
 
+  cancel() {
+    this.picture = null;
+  }
+ 
 }
